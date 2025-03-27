@@ -1,0 +1,4 @@
+# Ignore Files:
+data/AllSides
+data/Labeled_AllSides.csv
+notebooks/__pycache__
