@@ -25,6 +25,9 @@
 
     FINAL-PROJECT-LHL2025
     ├── data
+    │   ├── AllSides // Downloaded
+    │   ├── eval
+    │   ├── Labeled_AllSides.csv // Not included
     ├── images
     ├── LICENSE
     ├── model
