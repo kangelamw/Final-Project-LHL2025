@@ -15,8 +15,6 @@
   - [Performance Metrics](#performance-metrics)
   - [Hyperparameters](#hyperparameters)
 - [References](#references)
-  - [Readings](#readings)
-  - [Videos](#videos)
   - [Citations](#citations)
 
 <br>
@@ -76,20 +74,15 @@ By breaking down an article's underlying ideological leanings, the tool helps re
 
 ## **Project Resources**  
 
-#### **Models:**  
+#### **Model:**  [RoBERTa-base](https://huggingface.co/FacebookAI/roberta-base) (base model for classifier)
 
-  1. [RoBERTa-base](https://huggingface.co/FacebookAI/xlm-roberta-base) (base model for classifier)
-  2. [google/pegasus-cnn_dailymail](https://huggingface.co/google/pegasus-cnn_dailymail) (pre-trained, for news summarization)
-
-#### **Datasets:**
-
-  - [valurank/PoliticalBias_AllSides_Txt](https://huggingface.co/datasets/valurank/PoliticalBias_AllSides_Txt) (labeled political bias dataset for classifier training)
+#### **Dataset:** [valurank/PoliticalBias_AllSides_Txt](https://huggingface.co/datasets/valurank/PoliticalBias_AllSides_Txt) (labeled political bias dataset for classifier training)
 
 <br>
 
 ## **Model: kangelamw/news-angles-bias-decoder**
 
-[Link to the Model on Huggingface]()
+[Link to the Model on Huggingface](https://huggingface.co/kangelamw/RoBERTa-political-bias-classifier-softmax)
 
 ![Model Screenshot]()
 
@@ -104,67 +97,80 @@ By breaking down an article's underlying ideological leanings, the tool helps re
 - **F1-Score** (balances precision and recall for each bias category)
 - **KL-Divergence** (compares predicted probability distributions to true labels)
 
+<center>
+
+| Metric                  |   Value |
+|:------------------------|--------:|
+| **eval_accuracy**           |  0.9204 |
+| **eval_f1**                 |  0.9206 |
+| **eval_cross_entropy**     |  0.2789 |
+| **eval_kl_divergence**      |  0.2789 |
+| epoch                   |  4.9875 |
+
+</center>
+
+The model started at 82.11% **accuracy** and was able to get up to 92.03% by epoch 3. The **f1** is essentially the same at 82.18% and 92.05%
+
+![Training Metrics per Epoch v1](/images/v1_training_metrics.png)
+
+![Evaluation Metrics per Epoch v1](/images/v1_eval_metrics.png)
+
+
 ### **Hyperparameters:**  
+
 **Training Args:**
 
-## **Deployment Options**  
-- **API Backend:** Flask/FastAPI on **Azure Functions** or **Google Cloud Run**  
-- **Frontend:** Simple UI on **GitHub Pages** for bias visualization  
-- **Google Colab Notebook:** Open-source version for reproducibility  
+1. Learning Rate: Controls how much the model adjusts weights per step.
+  - Lowering LR stabilized training and smoothed out the gradient norm fluctuations. However, final accuracy dropped slightly from 92.03% to 90.02%.
+  - Likely means v1’s 2e-5 was close to optimal, and reducing LR slowed learning without significant gains.
+
+2. Learning Rate Scheduler: Defines how the LR decays over time
+  - Cosine smoothed training but didn’t outperform linear in final accuracy. Gradient spikes were still present, but they were not extreme.
+  - Linear decay worked slightly better for this task.
+
+3. Epochs: Determines how long the model trains/how many times it sees the data.
+  - v1’s best model was between epochs 3 and 4.
+  - v2’s accuracy plateaued at epoch 4.
+  - Running longer (5 epochs) didn’t add much value.
+
+> Conclusion:
+
+> - LR: 2e-5
+> - LR Scheduler: Linear
+> - Epochs 3-4
+
+## **Deployment**  
+
 
 <br>
 
 ## **References** 
 
-### Readings
-- ****
-  - Link
-- ****
-  - Link
-
-### Videos
-- ****
-  - Link
-- ****
-  - Link
-
 ### Citations
 
-- google/pegasus-cnn_dailymail
-  ```
-  @misc{zhang2019pegasus,
-      title={PEGASUS: Pre-training with Extracted Gap-sentences for Abstractive Summarization},
-      author={Jingqing Zhang and Yao Zhao and Mohammad Saleh and Peter J. Liu},
-      year={2019},
-      eprint={1912.08777},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
-  }
-  ```
-
-- FacebookAI/xlm-roberta-base
+- FacebookAI/roberta-base
 
   ```
-  @article{DBLP:journals/corr/abs-1911-02116,
-    author    = {Alexis Conneau and
-                Kartikay Khandelwal and
-                Naman Goyal and
-                Vishrav Chaudhary and
-                Guillaume Wenzek and
-                Francisco Guzm{\'{a}}n and
-                Edouard Grave and
-                Myle Ott and
-                Luke Zettlemoyer and
-                Veselin Stoyanov},
-    title     = {Unsupervised Cross-lingual Representation Learning at Scale},
-    journal   = {CoRR},
-    volume    = {abs/1911.02116},
-    year      = {2019},
-    url       = {http://arxiv.org/abs/1911.02116},
-    eprinttype = {arXiv},
-    eprint    = {1911.02116},
-    timestamp = {Mon, 11 Nov 2019 18:38:09 +0100},
-    biburl    = {https://dblp.org/rec/journals/corr/abs-1911-02116.bib},
-    bibsource = {dblp computer science bibliography, https://dblp.org}
-  }
+@article{DBLP:journals/corr/abs-1907-11692,
+  author    = {Yinhan Liu and
+               Myle Ott and
+               Naman Goyal and
+               Jingfei Du and
+               Mandar Joshi and
+               Danqi Chen and
+               Omer Levy and
+               Mike Lewis and
+               Luke Zettlemoyer and
+               Veselin Stoyanov},
+  title     = {RoBERTa: {A} Robustly Optimized {BERT} Pretraining Approach},
+  journal   = {CoRR},
+  volume    = {abs/1907.11692},
+  year      = {2019},
+  url       = {http://arxiv.org/abs/1907.11692},
+  archivePrefix = {arXiv},
+  eprint    = {1907.11692},
+  timestamp = {Thu, 01 Aug 2019 08:59:33 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-1907-11692.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
   ```

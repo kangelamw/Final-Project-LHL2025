@@ -1,4 +1,7 @@
 # Ignore Files:
 data/AllSides
+data/test.csv
+data/train.csv
 data/Labeled_AllSides.csv
 notebooks/__pycache__
+/model/roberta-classifier-bias-base_2
