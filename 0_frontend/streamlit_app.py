@@ -4,14 +4,33 @@ import base64
 from PIL import Image
 import io
 
+import re
+import html
+import unicodedata
+
 # Flask API URL
 API_URL = "http://localhost:5000/predict"
+
+# Clean text
+def clean_text(input_text):
+    if not isinstance(input_text, str):
+        input_text = str(input_text)
+
+    input_text = html.unescape(input_text)
+    input_text = unicodedata.normalize("NFKC", input_text)
+    input_text = re.sub(r"https?://\S+|www\.\S+", "", input_text)
+    input_text = re.sub(r"[^\w\s]", "", input_text)
+    input_text = re.sub(r"\s+", " ", input_text).strip()
+
+    return input_text
 
 st.title("Political Bias Classifier")
 st.write("Enter text to classify its political bias.")
 
 # User input
-text_input = st.text_area("Enter your text here:")
+raw_input = st.text_area("Enter your text here:")
+
+text_input = clean_text(raw_input)
 
 if st.button("Classify"):
     if text_input.strip():
