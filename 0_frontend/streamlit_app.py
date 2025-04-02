@@ -48,7 +48,8 @@ if st.button("Classify"):
             if predictions:
                 st.subheader("Classification Results")
                 for prediction in predictions:
-                    st.write(f"**{prediction['label']}**: {prediction['percentage']}%")
+                    for label, percentage in prediction.items():
+                        st.write(f"**{label}**: {percentage}%")
 
                 # Decode and display the image
                 if base64_image:
