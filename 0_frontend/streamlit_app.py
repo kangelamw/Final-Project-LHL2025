@@ -9,7 +9,7 @@ import html
 import unicodedata
 
 # Flask API URL
-API_URL = "http://localhost:5000/predict"
+API_URL = "https://final-project-lhl2025.onrender.com/predict"
 
 # Clean text
 def clean_text(input_text):
