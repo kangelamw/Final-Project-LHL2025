@@ -19,7 +19,7 @@ model_name = "kangelamw/RoBERTa-political-bias-classifier-softmax"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
 
-device=torch.device("cuda")
+device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 model.eval()
 
