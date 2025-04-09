@@ -7,10 +7,8 @@
 - [Project Details](#project-details)
 - [Process Overview](#process-overview)
 - [Who benefits?](#who-benefits)
-- [Project Resources](#resources)
-  - [Pre-Trained Models](#models)
-  - [Datasets](#datasets)
-- [Final Model](#final-model-fine-tuned-roberta-base-classifier--pegasus-summarizer)
+- [Project Resources](#project-resources)
+- [Model](#model-name-kangelamwnews-angles-bias-decoder)
 - [Results](#results)
   - [Performance Metrics](#performance-metrics)
   - [Hyperparameters](#hyperparameters)
@@ -53,7 +51,6 @@ By breaking down an article's underlying ideological leanings, the tool helps re
 
 - **Data Preparation:** Preprocess the dataset
 - **Bias Classification:** Fine-tune **RoBERTa-base** to predict political bias with a softmax layer, outputting probability scores for liberal, center, and conservative bias.
-- **Summarization:** Use **PEGASUS** to generate summaries of the articles for better readability.
 - **Visualization:** Display bias probabilities in a spider chart or numerical format.
 - **Deployment:** Package into an API and simple frontend for user interaction.
 
@@ -74,17 +71,19 @@ By breaking down an article's underlying ideological leanings, the tool helps re
 
 ## **Project Resources**  
 
-#### **Model:**  [RoBERTa-base](https://huggingface.co/FacebookAI/roberta-base) (base model for classifier)
+#### **Model:**  [RoBERTa-base](https://huggingface.co/FacebookAI/roberta-base) &mdash; base model for classifier
 
-#### **Dataset:** [valurank/PoliticalBias_AllSides_Txt](https://huggingface.co/datasets/valurank/PoliticalBias_AllSides_Txt) (labeled political bias dataset for classifier training)
+#### **Dataset:** [valurank/PoliticalBias_AllSides_Txt](https://huggingface.co/datasets/valurank/PoliticalBias_AllSides_Txt) &mdash; labeled political bias dataset for classifier training
 
 <br>
 
-## **Model: kangelamw/news-angles-bias-decoder**
+## **Model name: kangelamw/news-angles-bias-decoder**
 
 [Link to the Model on Huggingface](https://huggingface.co/kangelamw/RoBERTa-political-bias-classifier-softmax)
 
-![Model Screenshot]()
+![Model Screenshot](/images/model_ss.png)
+
+> You can try it [here!](https://political-bias-classifier.streamlit.app/) It might take a bit to 'wake up' &rarr; I'm on a free tier with Render :>
 
 <br>
 
@@ -92,10 +91,10 @@ By breaking down an article's underlying ideological leanings, the tool helps re
 
 ### **Performance Metrics**
 
-- **Accuracy** (how often the model predicts the correct category)
-- **Cross-Entropy Loss** (measures prediction confidence)
-- **F1-Score** (balances precision and recall for each bias category)
-- **KL-Divergence** (compares predicted probability distributions to true labels)
+- **Accuracy:** how often the model predicts the correct category
+- **Cross-Entropy Loss:** measures prediction confidence
+- **F1-Score:** balances precision and recall for each bias category
+- **KL-Divergence:** compares predicted probability distributions to true labels
 
 <center>
 
@@ -118,59 +117,64 @@ The model started at 82.11% **accuracy** and was able to get up to 92.03% by epo
 
 ### **Hyperparameters:**  
 
-**Training Args:**
-
 1. Learning Rate: Controls how much the model adjusts weights per step.
-  - Lowering LR stabilized training and smoothed out the gradient norm fluctuations. However, final accuracy dropped slightly from 92.03% to 90.02%.
-  - Likely means v1’s 2e-5 was close to optimal, and reducing LR slowed learning without significant gains.
+    - Lowering LR stabilized training and smoothed out the gradient norm fluctuations. However, final accuracy dropped slightly from 92.03% to 90.02%.
+    - Likely means v1’s 2e-5 was close to optimal, and reducing LR slowed learning without significant gains.
 
 2. Learning Rate Scheduler: Defines how the LR decays over time
-  - Cosine smoothed training but didn’t outperform linear in final accuracy. Gradient spikes were still present, but they were not extreme.
-  - Linear decay worked slightly better for this task.
+    - Cosine smoothed training but didn’t outperform linear in final accuracy. Gradient spikes were still present, but they were not extreme.
+    - Linear decay worked slightly better for this task.
 
 3. Epochs: Determines how long the model trains/how many times it sees the data.
-  - v1’s best model was between epochs 3 and 4.
-  - v2’s accuracy plateaued at epoch 4.
-  - Running longer (5 epochs) didn’t add much value.
+    - v1’s best model was between epochs 3 and 4.
+    - v2’s accuracy plateaued at epoch 4.
+    - Running longer (5 epochs) didn’t add much value.
 
-> Conclusion:
+#### Training Args:
+  ```python
+    TrainingArguments(
+      num_train_epochs=4,
+      learning_rate=2e-5,
+      lr_scheduler_type="linear",
+    )
+  ```
 
-> - LR: 2e-5
-> - LR Scheduler: Linear
-> - Epochs 3-4
-
-## **Deployment**  
-
+## **Deployment: Streamlit + Flask + Render**
+- **Streamlit:** The UI is built with Streamlit, providing an interactive platform for users to input news articles and visualize bias predictions. The project is hosted as a Streamlit app, making it easily accessible through a web browser.
+- **Flask:** A Flask API was created to serve the bias predictions. This API acts as the backend, receiving article text from the Streamlit frontend and returning the processed bias scores.
+- **Render:** Render is used to deploy the Flask API as a web service. Streamlit consumes this API to fetch the bias predictions for the articles submitted by users.
 
 <br>
 
-## **References** 
+## **References** Deploy a Flask App on Render
+
+Deploy a Flask App on Render
+- https://render.com/docs/deploy-flask
 
 ### Citations
 
 - FacebookAI/roberta-base
-
-  ```
-@article{DBLP:journals/corr/abs-1907-11692,
-  author    = {Yinhan Liu and
-               Myle Ott and
-               Naman Goyal and
-               Jingfei Du and
-               Mandar Joshi and
-               Danqi Chen and
-               Omer Levy and
-               Mike Lewis and
-               Luke Zettlemoyer and
-               Veselin Stoyanov},
-  title     = {RoBERTa: {A} Robustly Optimized {BERT} Pretraining Approach},
-  journal   = {CoRR},
-  volume    = {abs/1907.11692},
-  year      = {2019},
-  url       = {http://arxiv.org/abs/1907.11692},
-  archivePrefix = {arXiv},
-  eprint    = {1907.11692},
-  timestamp = {Thu, 01 Aug 2019 08:59:33 +0200},
-  biburl    = {https://dblp.org/rec/journals/corr/abs-1907-11692.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
-  ```
+    ```
+  @article{DBLP:journals/corr/abs-1907-11692,
+    author    = {Yinhan Liu and
+                Myle Ott and
+                Naman Goyal and
+                Jingfei Du and
+                Mandar Joshi and
+                Danqi Chen and
+                Omer Levy and
+                Mike Lewis and
+                Luke Zettlemoyer and
+                Veselin Stoyanov},
+    title     = {RoBERTa: {A} Robustly Optimized {BERT} Pretraining Approach},
+    journal   = {CoRR},
+    volume    = {abs/1907.11692},
+    year      = {2019},
+    url       = {http://arxiv.org/abs/1907.11692},
+    archivePrefix = {arXiv},
+    eprint    = {1907.11692},
+    timestamp = {Thu, 01 Aug 2019 08:59:33 +0200},
+    biburl    = {https://dblp.org/rec/journals/corr/abs-1907-11692.bib},
+    bibsource = {dblp computer science bibliography, https://dblp.org}
+  }
+    ```
