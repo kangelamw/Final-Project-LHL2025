@@ -61,9 +61,6 @@ By breaking down an article's underlying ideological leanings, the tool helps re
 - **General Public**
   > Equips readers with a critical lens to recognize hidden ideological influences and navigate media manipulation by revealing the subtle ideological currents that can unconsciously shape perception.
 
-- **Fact-Checking Organizations**
-  > Transforms bias assessment from subjective guesswork to data-driven analysis, providing a quantitative approach to understanding media political leanings.
-
 - **Journalists & Media Analysts**
   > Shows potential biases in news reporting to promote balance and objectivity in journalism.
 
